@@ -41,7 +41,7 @@
 #define TERMINAL_SCROLL_DOWN        0x15
 #define TERMINAL_SCROLL_LEFT        0x16
 #define TERMINAL_SCROLL_RIGHT       0x17
-#define TERMINAL_SET_FONT			0x18
+#define TERMINAL_SET_FONT			      0x18
 
 // Treat next uint8_t as a character (to allow PC DOS char codes 1 to 31 to be displayed on screen)
 #define TERMINAL_NEXT_IS_CHAR       0x1A 

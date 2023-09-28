@@ -14,7 +14,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #undef _SMARTY_DEBUG_
-#include "Smarty_TFT.h"
 
 // Video controller pins connections:
 // D0 & D1 – reserved for Serial connection
@@ -42,8 +41,6 @@ int VideoPort[8] = {6, 7, 8, 9, 10, 11, 12, 13};
 #define TFT_MISO -1
 //SPI bus: CS is hard-wired to Low (not connected here), RST = A0, DC = A1, MOSI = A2, SCK = A3, MISO = not connected (NC)
 
-//'Made with love by...' string for the splash screen 
-char madeWithLoveString[] = "Made with \x03 by Steve Wozniak";
 
 #define TEXT_COLOR ILI9341_CYAN // could be customized from Smarty_TFT.h Color definitions: e.g. ILI9341_NAVY
 #define BG_COLOR ILI9341_BLACK   // could be customized from Smarty_TFT.h Color definitions: e.g. ILI9341_DARKGREY
@@ -54,17 +51,10 @@ char madeWithLoveString[] = "Made with \x03 by Steve Wozniak";
 #define CONSOLE_COLON_COLOR ILI9341_MAGENTA //ILI9341_PURPLE
 #define CONSOLE_DOT_COLOR ILI9341_OLIVE
 
-#undef _TERMINAL_ //turn off Terminal (TV out)
-//#define _TERMINAL_ //turn on Terminal (TV out)
+#include <Terminal.h>
 
-#ifdef _TERMINAL_
-  #include <Terminal.h>
+  
   Terminal TV_terminal;   // creating instance of Terminal in I2C (TWI) mode, uses A4 (SDA) and A5 (SCL) as I2C bus
-#endif
- 
-
-//main code: setup() and loop()
-SmartyKit_DisplayDriver Display_module(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_RST, TFT_MISO); //creating instance of our Display Driver
  
 
 void setup() 
@@ -76,34 +66,19 @@ void setup()
 
   DisplayBusy(); //wait until video setup is ready
 
-  // starting TFT screen
-  uint16_t color = TEXT_COLOR;
-  uint16_t bgColor = BG_COLOR;
-  Display_module.setup(color, bgColor, madeWithLoveString);
 
   beep();
 
   for (int bit = 0; bit < 8; bit++) {
      pinMode(VideoPort[bit], INPUT); 
   };
+
   pinMode(CPU_WRITESTOVIDEOPORT_PIN, INPUT_PULLUP); 
 
-#ifdef _TERMINAL_
   // Initialise the terminal
   TV_terminal.setFont(TERMINAL_FONT_40_NORMAL_SINGLE);
   TV_terminal.setCursor(0,0);
-  TV_terminal.printLine("Hello!\r\nI'm SmartyKit 1\r\nApple 1-compatible computer\r\nwww.smartykit.io\n");
-
-  TV_terminal.printLine("\nType address to run:");
-  TV_terminal.printLine("F000R -> Woz's face demo");
-
-  TV_terminal.printLine("");
-  TV_terminal.printLine("     40x25 text output library for Arduino in two wire interface (I" "\xFD" "C) Mode");
-  TV_terminal.printLine("");
-  // Show the 80 character positions
-  TV_terminal.print("00000000001111111111222222222233333333334444444444555555555566666666667777777777");
-  TV_terminal.printLine("01234567890123456789012345678901234567890123456789012345678901234567890123456789");
-#endif
+  TV_terminal.printLine("Smarty Kit Video Controller\n");
   
   //attaching an Interrupt Service Routine (ISR) to process print CPU print signal received at CPU_WRITESTOVIDEOPORT_PIN
   attachInterrupt(1, printCharToDisplay, RISING); 
@@ -139,10 +114,7 @@ void printCharToDisplay(void) {
   }
   else if (scan_code == 0xD)
   {
-     Display_module.print('\n');
-     #ifdef _TERMINAL_
      TV_terminal.printLine("");
-     #endif
   }
   else
   {         
@@ -153,7 +125,8 @@ void printCharToDisplay(void) {
      //print only visible chars, starting from blanc 
      if (scan_code >= 0x20)
      { 
-         if (scan_code == 0x5C)      // prompt 
+      TV_terminal.send(scan_code);
+        /* if (scan_code == 0x5C)      // prompt 
           Display_module.print((char)scan_code, CONSOLE_PROMPT_COLOR); 
          else if (scan_code == 0x3A) //:
           Display_module.print((char)scan_code, CONSOLE_COLON_COLOR); 
@@ -162,10 +135,7 @@ void printCharToDisplay(void) {
          else
           Display_module.print((char)scan_code, TEXT_COLOR); 
 
-
-         #ifdef _TERMINAL_
-         TV_terminal.send(scan_code);
-         #endif
+        */
      }      
   }
   DisplayReady(); 
