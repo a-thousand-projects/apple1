@@ -24,27 +24,35 @@ Woz:      .byte $88, $a8, $50, $07, $61, $92, $94, $67
           nop
           .segment "C000"
           nop
+          
           .segment "E000"
-          nop
+          .include "a1basic.asm"
+
           .segment "F000"
+          nop
           ;Woz face
-          .include "Apple30th_Woz.asm"
+         ; .include "Apple30th_Woz.asm"
 
           .segment "F800"
+          nop
           ;Test from Apple-1 Operation Manual – printing all ASCII symbols in a loop
-          .include "TestFromManual.asm"
+         ; .include "TestFromManual.asm"
 
           .segment "FA00"
+          nop
           ;Power-On Self Test (POST)
-          .include "POST.asm"
+         ; .include "POST.asm"
 
            .segment "FC00"
-          ;printing 8x8 picture in the center with '*'
-          .include "8x8art.asm"
+           nop
+          ;;printing 8x8 picture in the center with '*'
+         ; .include "8x8art.asm"
 
           .segment "FD00"
+          ;.include "POST.asm"
+          nop
           ;Printing 'Hello, World!' 
-          .include "HelloWorld.asm"
+          ;.include "HelloWorld.asm"
 
           .segment "FF00"
           .include "Woz_Monitor.asm"
@@ -52,7 +60,7 @@ Woz:      .byte $88, $a8, $50, $07, $61, $92, $94, $67
           .segment "VECTORS"
           ; Interrupt Vectors
           .WORD NMI            ; NMI
-          .WORD POST_START     ; RESET (starting point in Woz Monitor) or POST (test)
+          .WORD RESET     ; RESET (starting point in Woz Monitor) or POST (test)
           .WORD IRQ            ; BRK/IRQ
 
 

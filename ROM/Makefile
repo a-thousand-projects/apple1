@@ -5,10 +5,10 @@ welcome:
 
 compile:
 	@echo "Assembling and linking..."
-	ca65 -l ROM_listing.asm SmartyKit1_ROM.asm
+	ca65 -v -l ROM_listing.asm SmartyKit1_ROM.asm
 	ld65 -m ROM.map -o SmartyKit1_ROM.bin SmartyKit1_ROM.o -C apple1.cfg
 
-	ld65 -o SmartyKit1_ROM_symon.bin SmartyKit1_ROM.o -C symon.cfg
+	@echo  "ld65 -o SmartyKit1_ROM_symon.bin SmartyKit1_ROM.o -C symon.cfg"
 
 clean:
 	@echo "Cleaning up..."
