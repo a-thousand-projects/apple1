@@ -24,6 +24,7 @@ DSPCR           = $D013         ;  PIA.B display control register
 
                .org $FF00
                .export RESET
+              
 
 RESET:          CLD             ; Clear decimal arithmetic mode.
                 CLI
@@ -47,7 +48,7 @@ BACKSPACE:      DEY             ; Back up text index.
                 BMI GETLINE     ; Beyond start of line, reinitialize.
 NEXTCHAR:       LDA KBDCR       ; Key ready?
                 BPL NEXTCHAR    ; Loop until ready.
-                LDA KBD         ; Load character. B7 should be ‘1’.
+                LDA KBD         ; Load character. B7 should be ï¿½1ï¿½.
                 STA IN,Y        ; Add to text buffer.
                 JSR ECHO        ; Display character.
                 CMP #$8D        ; CR?
@@ -85,7 +86,7 @@ DIG:            ASL
                 LDX #$04        ; Shift count.
 HEXSHIFT:       ASL             ; Hex digit left, MSB to carry.
                 ROL L           ; Rotate into LSD.
-                ROL H           ;  Rotate into MSD’s.
+                ROL H           ;  Rotate into MSDï¿½s.
                 DEX             ; Done 4 shifts?
                 BNE HEXSHIFT    ; No, loop.
                 INY             ; Advance text index.
@@ -94,43 +95,43 @@ NOTHEX:         CPY YSAV        ; Check if L, H empty (no hex digits).
                 BEQ ESCAPE      ; Yes, generate ESC sequence.
                 BIT MODE        ; Test MODE byte.
                 BVC NOTSTOR     ;  B6=0 STOR 1 for XAM & BLOCK XAM
-                LDA L           ; LSD’s of hex data.
-                STA (STL,X)     ; Store at current ‘store index’.
+                LDA L           ; LSDï¿½s of hex data.
+                STA (STL,X)     ; Store at current ï¿½store indexï¿½.
                 INC STL         ; Increment store index.
                 BNE NEXTITEM    ; Get next item. (no carry).
-                INC STH         ; Add carry to ‘store index’ high order.
+                INC STH         ; Add carry to ï¿½store indexï¿½ high order.
 TONEXTITEM:     JMP NEXTITEM    ; Get next command item.
 RUN:            JMP (XAML)      ; Run at current XAM index.
 NOTSTOR:        BMI XAMNEXT     ; B7=0 for XAM, 1 for BLOCK XAM.
                 LDX #$02        ; Byte count.
 SETADR:         LDA L-1,X       ; Copy hex data to
-                STA STL-1,X     ; ‘store index’.
-                STA XAML-1,X    ; And to ‘XAM index’.
+                STA STL-1,X     ; ï¿½store indexï¿½.
+                STA XAML-1,X    ; And to ï¿½XAM indexï¿½.
                 DEX             ; Next of 2 bytes.
                 BNE SETADR      ; Loop unless X=0.
 NXTPRNT:        BNE PRDATA      ; NE means no address to print.
                 LDA #$8D        ; CR.
                 JSR ECHO        ; Output it.
-                LDA XAMH        ; ‘Examine index’ high-order byte.
+                LDA XAMH        ; ï¿½Examine indexï¿½ high-order byte.
                 JSR PRBYTE      ; Output it in hex format.
-                LDA XAML        ; Low-order ‘examine index’ byte.
+                LDA XAML        ; Low-order ï¿½examine indexï¿½ byte.
                 JSR PRBYTE      ; Output it in hex format.
                 LDA #':'+$80    ; ":".
                 JSR ECHO        ; Output it.
 PRDATA:         LDA #$A0        ; Blank.
                 JSR ECHO        ; Output it.
-                LDA (XAML,X)    ; Get data byte at ‘examine index’.
+                LDA (XAML,X)    ; Get data byte at ï¿½examine indexï¿½.
                 JSR PRBYTE      ; Output it in hex format.
 XAMNEXT:        STX MODE        ; 0->MODE (XAM mode).
                 LDA XAML
-                CMP L           ; Compare ‘examine index’ to hex data.
+                CMP L           ; Compare ï¿½examine indexï¿½ to hex data.
                 LDA XAMH
                 SBC H
                 BCS TONEXTITEM  ; Not less, so no more data to output.
                 INC XAML
-                BNE MOD8CHK     ; Increment ‘examine index’.
+                BNE MOD8CHK     ; Increment ï¿½examine indexï¿½.
                 INC XAMH
-MOD8CHK:        LDA XAML        ; Check low-order ‘examine index’ byte
+MOD8CHK:        LDA XAML        ; Check low-order ï¿½examine indexï¿½ byte
                 AND #$07        ; For MOD 8=0
                 BPL NXTPRNT     ; Always taken.
 PRBYTE:         PHA             ; Save A for LSD.
@@ -152,3 +153,5 @@ ECHO:           BIT DSP         ; bit (B7) cleared yet?
 
  NMI:           RTI             ; simple Interrupt Service Routine(ISR)
  IRQ:           RTI             ; simple Interrupt Service Routine(ISR)
+
+

@@ -2238,6 +2238,7 @@ Current file: SmartyKit1_ROM.asm
 00F005  2                              .org $FF00
 00FF00  2                              .export RESET
 00FF00  2               
+00FF00  2               
 00FF00  2  D8           RESET:          CLD             ; Clear decimal arithmetic mode.
 00FF01  2  58                           CLI
 00FF02  2  A0 7F                        LDY #$7F        ; Mask for DSP data direction register.
@@ -2260,7 +2261,7 @@ Current file: SmartyKit1_ROM.asm
 00FF27  2  30 F6                        BMI GETLINE     ; Beyond start of line, reinitialize.
 00FF29  2  AD 11 D0     NEXTCHAR:       LDA KBDCR       ; Key ready?
 00FF2C  2  10 FB                        BPL NEXTCHAR    ; Loop until ready.
-00FF2E  2  AD 10 D0                     LDA KBD         ; Load character. B7 should be ‘1’.
+00FF2E  2  AD 10 D0                     LDA KBD         ; Load character. B7 should be ï¿½1ï¿½.
 00FF31  2  99 00 02                     STA IN,Y        ; Add to text buffer.
 00FF34  2  20 EF FF                     JSR ECHO        ; Display character.
 00FF37  2  C9 8D                        CMP #$8D        ; CR?
@@ -2298,7 +2299,7 @@ Current file: SmartyKit1_ROM.asm
 00FF72  2  A2 04                        LDX #$04        ; Shift count.
 00FF74  2  0A           HEXSHIFT:       ASL             ; Hex digit left, MSB to carry.
 00FF75  2  26 28                        ROL L           ; Rotate into LSD.
-00FF77  2  26 29                        ROL H           ;  Rotate into MSD’s.
+00FF77  2  26 29                        ROL H           ;  Rotate into MSDï¿½s.
 00FF79  2  CA                           DEX             ; Done 4 shifts?
 00FF7A  2  D0 F8                        BNE HEXSHIFT    ; No, loop.
 00FF7C  2  C8                           INY             ; Advance text index.
@@ -2307,43 +2308,43 @@ Current file: SmartyKit1_ROM.asm
 00FF81  2  F0 97                        BEQ ESCAPE      ; Yes, generate ESC sequence.
 00FF83  2  24 2B                        BIT MODE        ; Test MODE byte.
 00FF85  2  50 10                        BVC NOTSTOR     ;  B6=0 STOR 1 for XAM & BLOCK XAM
-00FF87  2  A5 28                        LDA L           ; LSD’s of hex data.
-00FF89  2  81 26                        STA (STL,X)     ; Store at current ‘store index’.
+00FF87  2  A5 28                        LDA L           ; LSDï¿½s of hex data.
+00FF89  2  81 26                        STA (STL,X)     ; Store at current ï¿½store indexï¿½.
 00FF8B  2  E6 26                        INC STL         ; Increment store index.
 00FF8D  2  D0 B5                        BNE NEXTITEM    ; Get next item. (no carry).
-00FF8F  2  E6 27                        INC STH         ; Add carry to ‘store index’ high order.
+00FF8F  2  E6 27                        INC STH         ; Add carry to ï¿½store indexï¿½ high order.
 00FF91  2  4C 44 FF     TONEXTITEM:     JMP NEXTITEM    ; Get next command item.
 00FF94  2  6C 24 00     RUN:            JMP (XAML)      ; Run at current XAM index.
 00FF97  2  30 2B        NOTSTOR:        BMI XAMNEXT     ; B7=0 for XAM, 1 for BLOCK XAM.
 00FF99  2  A2 02                        LDX #$02        ; Byte count.
 00FF9B  2  B5 27        SETADR:         LDA L-1,X       ; Copy hex data to
-00FF9D  2  95 25                        STA STL-1,X     ; ‘store index’.
-00FF9F  2  95 23                        STA XAML-1,X    ; And to ‘XAM index’.
+00FF9D  2  95 25                        STA STL-1,X     ; ï¿½store indexï¿½.
+00FF9F  2  95 23                        STA XAML-1,X    ; And to ï¿½XAM indexï¿½.
 00FFA1  2  CA                           DEX             ; Next of 2 bytes.
 00FFA2  2  D0 F7                        BNE SETADR      ; Loop unless X=0.
 00FFA4  2  D0 14        NXTPRNT:        BNE PRDATA      ; NE means no address to print.
 00FFA6  2  A9 8D                        LDA #$8D        ; CR.
 00FFA8  2  20 EF FF                     JSR ECHO        ; Output it.
-00FFAB  2  A5 25                        LDA XAMH        ; ‘Examine index’ high-order byte.
+00FFAB  2  A5 25                        LDA XAMH        ; ï¿½Examine indexï¿½ high-order byte.
 00FFAD  2  20 DC FF                     JSR PRBYTE      ; Output it in hex format.
-00FFB0  2  A5 24                        LDA XAML        ; Low-order ‘examine index’ byte.
+00FFB0  2  A5 24                        LDA XAML        ; Low-order ï¿½examine indexï¿½ byte.
 00FFB2  2  20 DC FF                     JSR PRBYTE      ; Output it in hex format.
 00FFB5  2  A9 BA                        LDA #':'+$80    ; ":".
 00FFB7  2  20 EF FF                     JSR ECHO        ; Output it.
 00FFBA  2  A9 A0        PRDATA:         LDA #$A0        ; Blank.
 00FFBC  2  20 EF FF                     JSR ECHO        ; Output it.
-00FFBF  2  A1 24                        LDA (XAML,X)    ; Get data byte at ‘examine index’.
+00FFBF  2  A1 24                        LDA (XAML,X)    ; Get data byte at ï¿½examine indexï¿½.
 00FFC1  2  20 DC FF                     JSR PRBYTE      ; Output it in hex format.
 00FFC4  2  86 2B        XAMNEXT:        STX MODE        ; 0->MODE (XAM mode).
 00FFC6  2  A5 24                        LDA XAML
-00FFC8  2  C5 28                        CMP L           ; Compare ‘examine index’ to hex data.
+00FFC8  2  C5 28                        CMP L           ; Compare ï¿½examine indexï¿½ to hex data.
 00FFCA  2  A5 25                        LDA XAMH
 00FFCC  2  E5 29                        SBC H
 00FFCE  2  B0 C1                        BCS TONEXTITEM  ; Not less, so no more data to output.
 00FFD0  2  E6 24                        INC XAML
-00FFD2  2  D0 02                        BNE MOD8CHK     ; Increment ‘examine index’.
+00FFD2  2  D0 02                        BNE MOD8CHK     ; Increment ï¿½examine indexï¿½.
 00FFD4  2  E6 25                        INC XAMH
-00FFD6  2  A5 24        MOD8CHK:        LDA XAML        ; Check low-order ‘examine index’ byte
+00FFD6  2  A5 24        MOD8CHK:        LDA XAML        ; Check low-order ï¿½examine indexï¿½ byte
 00FFD8  2  29 07                        AND #$07        ; For MOD 8=0
 00FFDA  2  10 C8                        BPL NXTPRNT     ; Always taken.
 00FFDC  2  48           PRBYTE:         PHA             ; Save A for LSD.
@@ -2365,6 +2366,8 @@ Current file: SmartyKit1_ROM.asm
 00FFF8  2               
 00FFF8  2  40            NMI:           RTI             ; simple Interrupt Service Routine(ISR)
 00FFF9  2  40            IRQ:           RTI             ; simple Interrupt Service Routine(ISR)
+00FFFA  2               
+00FFFA  2               
 00FFFA  2               
 00FFFA  1               
 00FFFA  1                         .segment "VECTORS"
